@@ -1,0 +1,10 @@
+grunt> bt = LOAD 'Crimes_2001_to_present.csv' USING PigStorage(',') AS (ID: chararray, CaseNumber: chararray, Date: chararray, Block: chararray, IUCR: int, PrimaryType: chararray, Description: chararray, LocationDescription: chararray, Arrest: charArray, Domestic: chararray, Beat: int, District: int, Ward: int, CommunityArea: int, FBICode: chararray, XCoordinate: double, YCoordinate: double, Year: int);
+grunt> btfAf = FILTER bt BY Arrest == 'false';
+grunt> btfAfgP = GROUP btfAf BY PrimaryType;
+grunt> btfAfgPCount = FOREACH btfAfgP GENERATE $0,COUNT(btfAf);  
+grunt> btgP = GROUP bt BY PrimaryType;
+grunt> btgPCount = FOREACH btgP GENERATE $0,COUNT(bt);
+grunt> btFinalJOIN = JOIN btgPCount BY $0, btfAfgPCount BY $0;
+grunt> btFinal = FOREACH btFinalJOIN GENERATE $0,(DOUBLE)((DOUBLE)$3/(DOUBLE)$1);
+grunt> btFinalSorted = ORDER btFinal BY $1 DESC;
+grunt> DUMP btFinalSorted

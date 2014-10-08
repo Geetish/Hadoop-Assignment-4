@@ -1,0 +1,9 @@
+grunt> A = LOAD 'Crimes_2001_to_present.csv' USING PigStorage(',') AS (ID:chararray,CaseNumber:chararray,Date:chararray,Block:chararray,IUCR:int,PrimaryType:chararray,Description:chararray, LocationDescription:chararray, Arrest:chararray, Domestic:chararray);
+grunt> B = FILTER A BY Arrest == 'true' OR Arrest == 'false';
+grunt> C = FOREACH B GENERATE PrimaryType,SUBSTRING(Date,0,INDEXOF(Date,'/',0)) AS Month;
+grunt> D = GROUP C BY (PrimaryType,Month);  
+grunt> E = FOREACH D GENERATE FLATTEN($0) AS (PrimaryType, Month),COUNT(C) AS cnt;
+grunt> F = GROUP E BY PrimaryType;
+grunt> G = FOREACH F GENERATE group,MAX(E.cnt);
+grunt> H = JOIN G BY ($0,$1), E BY ($0,$2);
+grunt> I = FOREACH H GENERATE $0,$3,$4;

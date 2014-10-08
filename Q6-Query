@@ -1,0 +1,11 @@
+grunt> REGISTER filter.jar                                              
+grunt> A = LOAD 'Crimes_2001_to_present.csv' USING PigStorage(',') AS (ID: chararray, CaseNumber: chararray, Date: chararray, Block: chararray, IUCR: int, PrimaryType: chararray, Description: chararray, LocationDescription: chararray, Arrest: charArray, Domestic: chararray, Beat: int, District: int, Ward: int, CommunityArea: int, FBICode: chararray, XCoordinate: double, YCoordinate: double, Year: int);
+grunt> B = FILTER A BY FilterHeader(Arrest);                       
+grunt> C = FOREACH B GENERATE PrimaryType,Year;                       
+grunt> D = GROUP C BY (PrimaryType,Year);                                
+grunt> E = FOREACH D GENERATE FLATTEN($0) AS (PrimaryType,Year), COUNT(C) AS cnt;    
+grunt> F = FILTER E BY Year==2001;                        
+grunt> G = FILTER E BY Year==2002;                       
+grunt> H = JOIN F BY $0,G BY $0;                
+grunt> I = FOREACH H GENERATE $0,(DOUBLE)(((DOUBLE)$5 - (DOUBLE)$2)/(DOUBLE)$2); 
+grunt> dump I  

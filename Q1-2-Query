@@ -1,0 +1,7 @@
+Q1-2
+grunt> A = LOAD 'Crimes_2001_to_present.csv' USING PigStorage(',') AS (ID: chararray, CaseNumber: chararray, Date: chararray, Block: chararray, IUCR: int, PrimaryType: chararray, Description: chararray, LocationDescription: chararray, Arrest: charArray, Domestic: chararray, Beat: int, District: int, Ward: int, CommunityArea: int, FBICode: chararray, XCoordinate: double, YCoordinate: double, Year: int);
+grunt> B = GROUP A BY CommunityArea; 
+grunt> C = FOREACH B GENERATE group, COUNT(A.CommunityArea) AS Mycount;      
+grunt> D = ORDER C BY Mycount DESC; 
+grunt> DUMP D
+ 
